@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <base target="_top">
+    <title> Unit Usaha Saprodi Koperasi Produsen Najaafarm Berkah</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      body{
+        padding-top:60px;
+      }
+      section{
+        padding-top:80px;
+      }
+      nav-link.active {
+      font-weight: bold;
+      color: #fff;
+      
+      }
+      .navbar-toggler {
+      margin-right: 10px;
+      }
+
+      .content {
+      max-height: 100vh;
+      overflow-y: auto;
+      position: relative;
+      padding-bottom: 20px;
+      }
+
+      .content h2 {
+    position: sticky;
+    top: 0;
+    background-color: white; /* Agar teks tetap terbaca saat scroll */
+    padding: 10px; /* Memberikan ruang agar terlihat nyaman */
+    z-index: 3; /* Pastikan tetap berada di atas konten lain */
+    border-bottom: 2px solid #ddd; /* Tambahkan garis bawah agar terlihat lebih jelas */
+}
+
+      .navbar-brand p {
+      font-size: 0.85em; /* Ukuran lebih kecil dari teks dalam <span> */
+      margin-top: -5px; /* Mengurangi jarak antara teks <p> dan <span> */
+      
+      }
+
+  .table-container, .tableTagihanSuplier-container {
+    max-height: 80vh;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    position: relative;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+th {
+    background-color: #f2f2f2;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+thead {
+    display: table-header-group;
+}
+
+
+    </style>
+  </head>
+  <body>
+
+  <!--navbar-->
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" >
+    <div class="container">
+      <!-- Logo & Nama Aplikasi -->
+      <a class="navbar-brand d-flex align-items-center" href="#">
+        <img src="" alt="Logo" width="40" height="40" class="d-inline-block align-top me-2">
+        <div class="d-flex flex-column">
+          <span class="ms-2 fw-bold">Keuangan Unit Usaha Saprodi</span>
+          <p class="ms-2 mb-0 small"> Koperasi Produsen Najaafarm Berkah</P>
+        </div>
+      </a>
+
+      <!-- Tombol Toggle untuk Mobile -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <!-- Menu Navigasi -->
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="#sectionDashboard">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="#sectionTagihanAnggota">Tagihan Anggota Koperasi</a></li>
+          <li class="nav-item"><a class="nav-link" href="#sectionTagihanSuplier">Tagihan Suplier Barang</a></li>
+          
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="content container mt-4" id="sectionDashboard">
+    
+    <div class="container mt-4">
+    <h2 >Laporan Keuangan Bulanan</h2>
+
+    <!-- Pilihan Bulan & Tahun -->
+    <div class="row mb-3">
+        <div class="col-md-5">
+            <label for="selectBulan">Pilih Bulan:</label>
+            <select id="selectBulan" class="form-control">
+                <option value="1">Januari</option>
+                <option value="2">Februari</option>
+                <option value="3">Maret</option>
+                <option value="4">April</option>
+                <option value="5">Mei</option>
+                <option value="6">Juni</option>
+                <option value="7">Juli</option>
+                <option value="8">Agustus</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Desember</option>
+            </select>
+        </div>
+        <div class="col-md-5">
+            <label for="selectTahun">Pilih Tahun:</label>
+            <input type="number" id="selectTahun" class="form-control" value="2025">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-primary w-100" onclick="loadMonthlyReport()">Lihat Laporan</button>
+        </div>
+    </div>
+
+    <!-- Ringkasan Keuangan -->
+    <div class="row text-center">
+    <div class="col-md-3 saldo">
+        <h5>Saldo Awal</h5>
+        <p id="saldoAwal">Rp 0</p>
+    </div>
+    <div class="col-md-3 saldo">
+        <h5>Total Pendapatan</h5>
+        <p id="totalPendapatan">Rp 0</p>
+    </div>
+    <div class="col-md-3 saldo">
+        <h5>Total Pengeluaran</h5>
+        <p id="totalPengeluaran">Rp 0</p>
+    </div>
+    <div class="col-md-3 saldo">
+        <h5>Saldo Akhir</h5>
+        <p id="saldoAkhir">Rp 0</p>
+    </div>
+</div>
+
+
+    <!-- Tagihan & Piutang -->
+    <div class="row text-center mt-4">
+        <div class="col-md-6">
+            <h5>Tagihan Anggota Belum Lunas</h5>
+            <p id="tagihanAnggota">Rp 0</p>
+        </div>
+        <div class="col-md-6">
+            <h5>Tagihan Supplier Belum Dibayar</h5>
+            <p id="tagihanSupplier">Rp 0</p>
+        </div>
+    </div>
+
+    <!-- Tabel Detail Kas Masuk & Keluar -->
+    <div class="table-responsive mt-4">
+        <h4>Detail Pemasukan & Pengeluaran</h4>
+        <table class="table ">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>Jenis</th>
+                    <th>Kategori</th>
+                    <th>Jumlah</th>
+                </tr>
+            </thead>
+            <tbody id="detailTransaksi"></tbody>
+        </table>
+    </div>
+
+    
+</div>
+
+
+  </div>
+
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-lg-6">
+        <button class="btn btn-success mt-3 w-100"id="buttonCashIn" >+ Catat Cash Masuk</button>
+      </div>
+      <div class="col-lg-6">
+        <button class="btn btn-danger mt-3 w-100"id="buttonCashOut" >- Catat Cash Keluar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content container mt-4" id="sectionTagihanAnggota">
+    <h2>Tagihan Anggota Koperasi</h2>
+      <div id="no-bills-message" style="display: none; text-align: center; padding: 20px; font-size: 18px;">
+        ✅ Semua tagihan telah lunas atau tidak ada transaksi pembelian. 🎉
+    </div>
+    <div class="table-container" style="display: none;">
+      <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nama Anggota</th>
+                <th>Total Tagihan</th>
+                <th>Detail Pembelian</th>
+            </tr>
+        </thead>
+        <tbody id="tagihan-table">
+        </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="content container mt-4" id="sectionTagihanSuplier">
+    <h2>Tagihan Suplier Barang</h2>
+    <div id="no-supplier-message" style="display: none; text-align: center; padding: 20px; font-size: 18px;">
+        ✅ Semua tagihan telah lunas atau tidak ada transaksi pembelian. 🎉
+    </div>
+    <div class="tableTagihanSuplier-container" style="display: none;">
+      <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nama Suplier</th>
+                <th>Total Tagihan</th>
+                <th>Detail Pembelian</th>
+            </tr>
+        </thead>
+        <tbody id="tagihanSuplier-table">
+        </tbody>
+    </table>
+    </div>
+  </div>
+
+  
+
+<!-- Modal Pembayaran -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="titleModalPembayaran">Pembayaran</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="paymentForm">
+          <input type="hidden" id="modalEntityType" name="entityType">
+          <input type="hidden" id="modalAnggota" name="anggota">
+          <input type="hidden" id="modalProduk" name="produk">
+          <input type="hidden" id="modalIndex" name="index">
+          <input type="hidden" id="modalTanggal" name="tanggal">
+
+          <p><b>Tanggal Transaksi:</b> <span id="displayTanggal"></span></p>
+          <p><b id="labelNamaFormBayar">Nama:</b> <span id="displayAnggota"></span></p>
+          <p><b>Produk:</b> <span id="displayProduk"></span></p>
+          <p><b>Sisa Tagihan:</b> Rp <span id="displaySisa"></span></p>
+
+          <label for="jumlahBayar">Jumlah Pembayaran:</label>
+          <input type="number" id="jumlahBayar" class="form-control" required>
+
+          <label for="metodeBayar">Metode Pembayaran:</label>
+          <select id="metodeBayar" class="form-control"></select>
+
+          <button type="button" class="btn btn-success mt-3" onclick="prosesPembayaranUniversal()">Bayar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal cash dan Biaya operasional -->
+<div class="modal fade" id="operationalCostModal" tabindex="-1" aria-labelledby="operationalCostModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="titleCashdanOperasional">Catat Biaya Operasional</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="operationalCostForm">
+          <label for="tanggalBiaya">Tanggal:</label>
+          <input type="date" id="tanggalBiaya" class="form-control" required>
+
+          <label for="jumlahBiaya" id="labelJumlahBiaya">Jumlah:</label>
+          <input type="number" id="jumlahBiaya" class="form-control" required>
+
+          <label for="kategoriCash" id="kategoriCash">Kategori Pemasukkan / Pengeluaran</label>
+          <select id="kategoriCashOptions" class="form-control"></select>
+
+          <label for="keteranganBiaya">Keterangan:</label>
+          <textarea id="keteranganBiaya" class="form-control" required></textarea>
+
+          <button type="button" class="btn btn-success mt-3" onclick="processOperationalCost()">Simpan</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    
+  </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+
+
+    
+
+    //fungsi navbar
+    document.addEventListener("DOMContentLoaded", function () {
+    
+    loadTagihan();
+    loadBelanjaKoperasi();
+
+
+      document.querySelectorAll(".nav-link").forEach(link => {
+        link.addEventListener("click", function (event) {
+          event.preventDefault(); // Mencegah navigasi default
+
+          let targetId = this.getAttribute("href").substring(1);
+          let targetElement = document.getElementById(targetId);
+
+          if (targetElement) {
+            let navbarHeight = document.querySelector(".navbar").offsetHeight; // Ambil tinggi navbar
+            let offsetPosition = targetElement.offsetTop - navbarHeight - 20; // Tambahkan jarak agar tidak tertutup
+
+            window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+
+            // **Pindahkan efek aktif di navbar**
+            document.querySelectorAll(".nav-link").forEach(nav => nav.classList.remove("active"));
+            this.classList.add("active");
+          }
+        });
+      });
+    });
+
+    //display tabel dinamis
+    document.addEventListener("DOMContentLoaded", function () {
+    var tables = document.querySelectorAll(".table-container");
+
+    tables.forEach(function (tableContainer) {
+        var table = tableContainer.querySelector("table");
+        if (table.clientHeight < window.innerHeight * 0.8) {
+            tableContainer.style.maxHeight = "auto"; // Biarkan tabel tumbuh jika tidak cukup tinggi untuk scroll
+        } else {
+            tableContainer.style.maxHeight = "80vh"; // Gunakan scroll jika tabel cukup panjang
+        }
+    });
+});
+
+
+    //ambil data belanja petani
+     function loadTagihan() {
+    google.script.run.withSuccessHandler(function(data) {
+        // console.log("Data tagihan setelah memperhitungkan pembayaran:", data);
+
+        var tbody = document.getElementById("tagihan-table");
+        tbody.innerHTML = "";
+        var tableContainer = document.querySelector(".table-container");
+        var noBillsMessage = document.getElementById("no-bills-message");
+
+        if (Object.keys(data).length === 0) {
+            noBillsMessage.style.display = "block";
+            tableContainer.style.display = "none";
+            return;
+        } else {
+            noBillsMessage.style.display = "none";
+            tableContainer.style.display = "block";
+        }
+
+        for (var namaAnggota in data) {
+            var row = `<tr>
+                <td>${namaAnggota}</td>
+                <td>Rp ${data[namaAnggota].totalTagihan.toLocaleString()}</td>
+                <td>
+                    <ul>`;
+
+            data[namaAnggota].pembelian.forEach((p, index) => {
+                var sisaPembayaran = p.totalHarga - (p.sudahBayar || 0);
+                var tanggalValid = p.tanggal ? new Date(p.tanggal).toISOString().split("T")[0] : "Tanggal Tidak Valid";
+
+                row += `<li>${tanggalValid}: ${p.namaProduk} (${p.jumlah}) 
+                        <br><b>Total Harga: Rp ${p.totalHarga.toLocaleString()}</b>
+                        <br><b>Dibayar: Rp ${p.sudahBayar.toLocaleString()}</b>
+                        <br><b>Sisa Tagihan: Rp ${sisaPembayaran.toLocaleString()}</b>
+                        <button class="btn btn-primary btn-sm" onclick="openPaymentModal('anggota', '${namaAnggota}', '${p.namaProduk}', ${sisaPembayaran}, ${index}, '${tanggalValid}')">Bayar</button></li>`;
+            });
+
+            row += `</ul></td></tr>`;
+            tbody.innerHTML += row;
+        }
+    }).getPenjualanData();
+}
+
+
+    //tombol bayar tagihan 
+
+function openPaymentModal(entityType, nama, namaProduk, sisaPembayaran, index, tanggal) {
+    var validDate = new Date(tanggal);
+    if (isNaN(validDate.getTime())) {
+        console.error(`Tanggal transaksi invalid: ${tanggal}`);
+        tanggal = "Tanggal tidak valid"; // Tampilan default jika ada error
+    }
+
+    var modalTitle = document.getElementById("titleModalPembayaran");
+    var namaLabel = document.getElementById("labelNamaFormBayar");
+    var metodePembayaranField = document.getElementById("metodeBayar");
+
+    // **Reset modal sebelum menampilkan transaksi baru**
+    document.getElementById("jumlahBayar").value = "";
+    metodePembayaranField.innerHTML = ""; // Bersihkan metode pembayaran agar muncul kembali
+
+    if (entityType === "anggota") {
+        modalTitle.innerText = "Pembayaran Tagihan Anggota";
+        namaLabel.innerText = "Nama Anggota";
+
+        metodePembayaranField.innerHTML = `
+            <option value="Tunai">Tunai</option>
+            <option value="Transfer">Transfer</option>
+            <option value="Potong Tabungan">Potong Tabungan</option>
+            <option value="Potong Hasil Penjualan Butternut">Potong Hasil Penjualan Butternut</option>
+        `;
+    } else if (entityType === "supplier") {
+        modalTitle.innerText = "Pembayaran Tagihan Supplier";
+        namaLabel.innerText = "Nama Supplier";
+
+        metodePembayaranField.innerHTML = `
+            <option value="Tunai">Tunai</option>
+            <option value="Transfer">Transfer</option>
+        `;
+    }
+
+    document.getElementById("modalEntityType").value = entityType;
+    document.getElementById("modalAnggota").value = nama;
+    document.getElementById("modalProduk").value = namaProduk;
+    document.getElementById("modalIndex").value = index;
+    document.getElementById("modalTanggal").value = tanggal;
+
+    document.getElementById("displayTanggal").innerText = tanggal;
+    document.getElementById("displayAnggota").innerText = nama;
+    document.getElementById("displayProduk").innerText = namaProduk;
+    document.getElementById("displaySisa").innerText = sisaPembayaran.toLocaleString();
+
+    var modal = new bootstrap.Modal(document.getElementById("paymentModal"));
+    modal.show();
+}
+
+// **Pastikan modal di-reset setiap kali ditutup**
+document.getElementById("paymentModal").addEventListener("hidden.bs.modal", function () {
+    document.getElementById("jumlahBayar").value = "";
+    document.getElementById("metodeBayar").innerHTML = ""; // Kosongkan metode pembayaran saat modal ditutup
+});
+
+//validasi input pembayaran
+function validatePaymentForm() {
+    var jumlahBayar = document.getElementById("jumlahBayar").value;
+    var sisaTagihan = parseFloat(document.getElementById("displaySisa").innerText.replace(/[^0-9.-]+/g, "")); // Ambil angka dari teks
+
+    // **Pastikan input tidak kosong atau 0**
+    if (!jumlahBayar || jumlahBayar <= 0) {
+        alert("Jumlah pembayaran harus lebih dari 0!");
+        return false;
+    }
+
+    // **Pastikan pembayaran tidak melebihi sisa tagihan**
+    if (jumlahBayar > sisaTagihan) {
+        alert("Jumlah pembayaran tidak boleh lebih besar dari sisa tagihan!");
+        return false;
+    }
+
+    return true;
+}
+
+
+
+//proses bayar
+
+function prosesPembayaranUniversal() {
+  if (!validatePaymentForm()) {
+        return; // Hentikan proses jika validasi gagal
+    }
+    var entityType = document.getElementById("modalEntityType").value;
+    var nama = document.getElementById("modalAnggota").value;
+    var namaProduk = document.getElementById("modalProduk").value;
+    var jumlahBayar = parseFloat(document.getElementById("jumlahBayar").value);
+    var metodeBayar = document.getElementById("metodeBayar").value;
+    var index = document.getElementById("modalIndex").value;
+    var tanggalTransaksi = document.getElementById("modalTanggal").value; // Ambil tanggal transaksi dari modal
+
+    if (jumlahBayar <= 0) {
+        alert("Jumlah pembayaran harus lebih dari 0!");
+        return;
+    }
+
+    var modal = bootstrap.Modal.getInstance(document.getElementById("paymentModal"));
+
+    if (entityType === "supplier") {
+        google.script.run.withSuccessHandler(function() {
+            updateTagihanSupplier(); // Pastikan tampilan diperbarui setelah pembayaran supplier
+            modal.hide();
+        }).recordPaymentSupplier(nama, namaProduk, jumlahBayar, metodeBayar, index, tanggalTransaksi);
+    } else {
+        google.script.run.withSuccessHandler(function() {
+            updateTagihanAnggota(); // Pastikan tampilan diperbarui setelah pembayaran anggota
+            modal.hide();
+        }).recordPaymentAnggota(nama, namaProduk, jumlahBayar, metodeBayar, index);
+    }
+}
+
+
+//update daftar tagaihan setelah dibayar
+function updateTagihanAnggota() {
+    google.script.run.withSuccessHandler(function(data) {
+        alert("Pembayaran berhasil")
+        console.log("Tagihan diperbarui setelah pembayaran:", data);
+        loadTagihan(); // Muat ulang tampilan tagihan
+        loadMonthlyReport();
+    }).getPenjualanData();
+}
+
+function updateTagihanSupplier() {
+    google.script.run.withSuccessHandler(function(data) {
+        alert("Pembayaran berhasil")
+        console.log("Tagihan supplier diperbarui:", data);
+        loadBelanjaKoperasi(); // Muat ulang tampilan
+        loadMonthlyReport();
+    }).getPembelianData();
+}
+
+
+
+//ambil data belanja koperasi
+function loadBelanjaKoperasi() {
+    google.script.run.withSuccessHandler(function(data) {
+        // console.log("Data tagihan setelah pembaruan:", data); // Debugging
+
+        var tbody = document.getElementById("tagihanSuplier-table");
+        tbody.innerHTML = "";
+        var tableContainer = document.querySelector(".tableTagihanSuplier-container");
+        var noBillsMessage = document.getElementById("no-supplier-message");
+
+        if (Object.keys(data).length === 0) {
+            noBillsMessage.style.display = "block";
+            tableContainer.style.display = "none";
+            return;
+        } else {
+            noBillsMessage.style.display = "none";
+            tableContainer.style.display = "block";
+        }
+
+        for (var namaSupplier in data) {
+            var row = `<tr>
+                <td>${namaSupplier}</td>
+                <td>Rp ${data[namaSupplier].totalTagihan.toLocaleString()}</td>
+                <td><ul>`;
+            
+            data[namaSupplier].pembelian.forEach((p, index) => {
+                row += `<li>${p.tanggal}: ${p.namaProduk} (${p.jumlah}) 
+                        <br><b>Total Harga: Rp ${p.totalHarga.toLocaleString()}</b>
+                        <br><b>Dibayar: Rp ${p.sudahBayar.toLocaleString()}</b>
+                        <br><b>Sisa Tagihan: Rp ${p.sisaPembayaran.toLocaleString()}</b>
+                        <button class="btn btn-primary btn-sm" onclick="openPaymentModal('supplier', '${namaSupplier}', '${p.namaProduk}', ${p.sisaPembayaran}, ${index}, '${p.tanggal}')">Bayar</button></li>`;
+            });
+
+            row += `</ul></td></tr>`;
+            tbody.innerHTML += row;
+        }
+    }).getPembelianData();
+}
+
+
+function processOperationalCost() {
+    var tanggal = document.getElementById("tanggalBiaya").value;
+    var jumlah = parseFloat(document.getElementById("jumlahBiaya").value);
+    var keterangan = document.getElementById("keteranganBiaya").value;
+
+    // **Validasi input sebelum dikirim**
+    if (!tanggal || jumlah <= 0 || !keterangan.trim()) {
+        alert("Pastikan semua data diisi dengan benar!");
+        return;
+    }
+
+    // **Kirim data ke backend agar dicatat dalam spreadsheet**
+    google.script.run.withSuccessHandler(loadOperationalCosts).recordOperationalCost(tanggal, jumlah, keterangan);
+
+    var modal = new bootstrap.Modal(document.getElementById("operationalCostModal"));
+    modal.hide();
+}
+
+//fungsi cash masuk dan keluar
+
+
+document.getElementById("buttonCashIn").addEventListener("click", function(){
+  openCashModal("masuk");
+});
+
+document.getElementById("buttonCashOut").addEventListener("click", function(){
+  openCashModal("keluar");
+});
+
+
+
+function openCashModal(type) {
+    var modalTitle = document.getElementById("titleCashdanOperasional");
+    var kategoriSelect = document.getElementById("kategoriCashOptions");
+
+    // **Reset nilai input sebelum modal dibuka**
+    document.getElementById("tanggalBiaya").value = new Date().toISOString().split("T")[0]; // Default tanggal hari ini
+    document.getElementById("jumlahBiaya").value = "";
+    document.getElementById("keteranganBiaya").value = "";
+    kategoriSelect.innerHTML = ""; // Kosongkan kategori sebelum diisi ulang
+
+    if (type === "masuk") {
+        modalTitle.innerText = "Catat Cash Masuk";
+        kategoriSelect.innerHTML = `
+            <option value="Modal">Modal</option>
+            <option value="Lain-lain">Lain-lain</option>
+        `;
+    } else if (type === "keluar") {
+        modalTitle.innerText = "Catat Cash Keluar";
+        kategoriSelect.innerHTML = `
+            <option value="Gaji">Gaji</option>
+            <option value="Operasional">Operasional</option>
+            <option value="Transport">Transport</option>
+            <option value="Lain-lain">Lain-lain</option>
+        `;
+    }
+
+    // **Simpan tipe transaksi untuk diproses nanti**
+    document.getElementById("operationalCostForm").dataset.cashType = type;
+
+    var modal = new bootstrap.Modal(document.getElementById("operationalCostModal"));
+    modal.show();
+}
+
+//proses pencatatan
+function processOperationalCost() {
+    var tanggal = document.getElementById("tanggalBiaya").value;
+    var jumlah = parseFloat(document.getElementById("jumlahBiaya").value);
+    var kategori = document.getElementById("kategoriCashOptions").value;
+    var keterangan = document.getElementById("keteranganBiaya").value;
+    var cashType = document.getElementById("operationalCostForm").dataset.cashType;
+
+
+    if (!tanggal || jumlah <= 0 || !kategori || !keterangan.trim()) {
+        alert("Pastikan semua data diisi dengan benar!");
+        return;
+    }
+
+    var sheetName = cashType === "masuk" ? "cash masuk" : "cash keluar";
+
+    google.script.run.withSuccessHandler(function(response) {
+        alert(response); // Beri tahu pengguna bahwa pencatatan berhasil
+        var modalElement = document.getElementById("operationalCostModal");
+        var modalInstance = bootstrap.Modal.getInstance(modalElement);
+        modalInstance.hide();
+        loadMonthlyReport(); // Perbarui tampilan daftar biaya operasional
+    }).recordCashTransaction(sheetName, tanggal, jumlah, kategori, keterangan);
+}
+
+//laporan keuangan
+function loadMonthlyReport() {
+    var bulan = document.getElementById("selectBulan").value;
+    var tahun = document.getElementById("selectTahun").value;
+
+    google.script.run.withSuccessHandler(function(data) {
+        if (!data || typeof data !== "object") {
+            console.error("Data laporan tidak valid!");
+            return;
+        }
+
+        setSaldoText("saldoAwal", data.saldoAwal);
+        setSaldoText("totalPendapatan", data.totalPendapatan);
+        setSaldoText("totalPengeluaran", data.totalPengeluaran);
+        setSaldoText("saldoAkhir", data.saldoAkhir);
+
+        // **total tagihan anggota belum lunas**
+        google.script.run.withSuccessHandler(function(tagihanData) {
+            if (!tagihanData || Object.keys(tagihanData).length === 0) {
+                document.getElementById("tagihanAnggota").innerText = "Tidak ada tunggakan.";
+                return;
+            }
+
+            var totalTagihan = Object.values(tagihanData).reduce((sum, anggota) => sum + anggota.totalTagihan, 0);
+            document.getElementById("tagihanAnggota").innerText = "Rp " + totalTagihan.toLocaleString();
+
+        }).getPenjualanData();
+
+
+         // **total tagihan supplier belum dibayar**
+         google.script.run.withSuccessHandler(function(tagihanData) {
+            if (!tagihanData || Object.keys(tagihanData).length === 0) {
+                document.getElementById("tagihanSupplier").innerText = "Tidak ada tunggakan.";
+                return;
+            }
+
+            var totalTagihan = Object.values(tagihanData).reduce((sum, anggota) => sum + anggota.totalTagihan, 0);
+            document.getElementById("tagihanSupplier").innerText = "Rp " + totalTagihan.toLocaleString();
+
+        }).getPembelianData();
+
+
+         //arus kas
+          google.script.run.withSuccessHandler(function(transaksiData) {
+            var transaksiTable = document.getElementById("detailTransaksi");
+            transaksiTable.innerHTML = "";
+
+            if (!transaksiData || transaksiData.length === 0) {
+                transaksiTable.innerHTML = "<tr><td colspan='4'>Tidak ada transaksi dalam bulan ini.</td></tr>";
+                return;
+            }
+
+            transaksiData.forEach(row => {
+              var kelasaBaris = row.jenis === "Pengeluaran" ? "table-danger" : "table-success";
+                transaksiTable.innerHTML += `<tr class=${kelasaBaris}>
+                    <td>${row.tanggal}</td> <!-- Tanggal sudah diformat di backend -->
+                    <td>${row.jenis}</td>
+                    <td >${row.kategori}</td>
+                    <td >Rp ${row.jumlah.toLocaleString()}</td>
+                </tr>`;
+            });
+
+        }).getDetailTransaksiBulanan(bulan, tahun);
+
+    }).getLaporanKeuanganBulanan(bulan, tahun);
+}
+
+function setSaldoText(id, nilai) {
+    var element = document.getElementById(id);
+    element.innerText = "Rp " + nilai.toLocaleString();
+    
+    if (nilai < 0) {
+        element.classList.add("text-danger"); // Tambahkan warna merah jika negatif
+    } else {
+        element.classList.remove("text-danger"); // Pastikan saldo positif tetap normal
+    }
+}
+
+
+// **Tampilkan laporan bulan & tahun sekarang saat aplikasi dimuat**
+window.onload = function() {
+    var today = new Date();
+    document.getElementById("selectBulan").value = today.getMonth() + 1;
+    document.getElementById("selectTahun").value = today.getFullYear();
+
+    loadMonthlyReport();
+
+    
+};
+
+
+  </script>
+</html>
